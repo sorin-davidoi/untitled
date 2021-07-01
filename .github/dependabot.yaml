@@ -1,0 +1,20 @@
+version: 2
+
+updates:
+  - package-ecosystem: "docker"
+    directory: "/tools/commitlint"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/tools/commitlint"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "docker"
+    directory: "/tools/editorconfig-checker"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/tools/editorconfig-checker"
+    schedule:
+      interval: "daily"
