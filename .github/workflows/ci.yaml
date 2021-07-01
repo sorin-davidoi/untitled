@@ -1,0 +1,22 @@
+name: "CI" # Keep in sync with the badges in README.md
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
+jobs:
+  editorconfig-checker:
+    name: "EditorConfig"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: make editorconfig-checker

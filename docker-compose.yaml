@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  editorconfig-checker:
+    build:
+      context: tools/editorconfig-checker
+    volumes:
+      - .:/app/repository:ro,z
+    tty: true

@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "editorconfig-checker": "(cd repository; editorconfig-checker --verbose)"
+    },
+    "dependencies": {
+        "editorconfig-checker": "4.0.2"
+    }
+}
