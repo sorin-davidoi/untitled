@@ -1,6 +1,13 @@
 version: "3.9"
 
 services:
+  commitlint:
+    build:
+      context: tools/commitlint
+    volumes:
+      - ./.git:/app/.git:ro,z
+    tty: true
+
   editorconfig-checker:
     build:
       context: tools/editorconfig-checker

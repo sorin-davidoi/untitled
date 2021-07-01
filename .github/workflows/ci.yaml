@@ -11,6 +11,16 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
 
 jobs:
+  commitlint:
+    name: "Conventional Commits"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: make commitlint
+
   editorconfig-checker:
     name: "EditorConfig"
     runs-on: "ubuntu-20.04"

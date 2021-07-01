@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "commitlint": "commitlint --from 8236072eb9a5fb7224960d61c0ae9314591fbf79 --to HEAD --verbose"
+    },
+    "dependencies": {
+        "@commitlint/cli": "12.1.4",
+        "@commitlint/config-conventional": "12.1.4"
+    }
+}
