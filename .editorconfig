@@ -17,5 +17,8 @@ indent_size = unset
 [Makefile]
 indent_style = tab
 
+[app/Cargo.lock]
+indent_size = unset
+
 [*.yaml]
 indent_size = 2

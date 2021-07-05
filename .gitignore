@@ -1,2 +1,4 @@
+/app/target
+
 /tools/commitlint/node_modules
 /tools/editorconfig-checker/node_modules

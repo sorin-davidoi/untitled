@@ -1,0 +1,8 @@
+[package]
+name = "web"
+version = "0.1.0"
+authors = ["Sorin Davidoi <sorin@sorin-davidoi.com>"]
+edition = "2018"
+
+[dependencies]
+rocket = { version = "0.5.0-rc", default-features = false }
