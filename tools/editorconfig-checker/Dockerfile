@@ -1,4 +1,4 @@
-FROM node:16.3.0-alpine3.13
+FROM node:16.4.0-alpine3.13
 
 # Needed for ignoring git-related files
 RUN apk add --no-cache git
