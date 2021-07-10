@@ -1,19 +1,18 @@
-//! Route for viewing feed information.
+//! Route for viewing feed item information.
 
 use maud::{html, Markup, PreEscaped};
 use reqwest::get;
 use rocket::async_stream::stream;
 use rocket::futures::Stream;
 use rocket::tokio::task::spawn_blocking;
-use rocket::uri;
 use rss::Channel;
 use std::io::Cursor;
 
 use crate::pages::Page;
 
 /// Render the feed at the given URI.
-#[get("/feeds/<uri>", format = "text/html")]
-pub async fn render<'r>(uri: String) -> Page<impl Stream<Item = Markup>> {
+#[get("/feeds/<uri>/<guid>", format = "text/html")]
+pub async fn render<'r>(uri: String, guid: String) -> Page<impl Stream<Item = Markup>> {
     Page::builder()
         .content(stream! {
             yield html! { (PreEscaped("
@@ -24,10 +23,10 @@ pub async fn render<'r>(uri: String) -> Page<impl Stream<Item = Markup>> {
                 </style>
             ")) };
             yield html! { main; };
-            yield html! { div role="progressbar" aria-label=(&uri); };
+            yield html! { div role="progressbar" aria-label=(uri); };
             yield html! { span { "Establishing connection..." } };
 
-            let response = match get(&uri).await {
+            let response = match get(uri).await {
                 Ok(response) => response,
                 Err(err) => {
                     yield html! { span { "Could not establish connection: " (err) } };
@@ -61,25 +60,19 @@ pub async fn render<'r>(uri: String) -> Page<impl Stream<Item = Markup>> {
 
             match spawn_blocking(move || Channel::read_from(Cursor::new(bytes))).await {
                 Ok(Ok(feed)) => {
-                    yield html! {
-                        (PreEscaped("</div>"))
-                        h1 { (feed.title()) }
-                        p { (feed.description()) }
-                    };
+                    yield html! { (PreEscaped("</div>")) };
 
-                    yield html! { ol; };
-                    for item in feed.items() {
+                    if let Some(item) = feed.items().iter().find(|item| item.guid().map(|guid| guid.value()) == Some(&guid)) {
                         yield html! {
-                            li {
-                                @if let Some(guid) = item.guid() {
-                                    a href=(uri!(super::view_item::render(uri = &uri, guid = guid.value()))) { (item.title().unwrap_or_else(|| "Untitled")) };
-                                } @else {
-                                    (item.title().unwrap_or_else(|| "Untitled"))
-                                }
-                            }
-                        }
+                            @if let Some(title) = item.title() { h1 { (title) } };
+                            @if let Some(description) = item.description() { p { (description) } };
+                            @if let Some(content) = item.content() { (content) };
+                        };
+                    } else {
+                        yield html! {
+                            p { "Item not found." }
+                        };
                     }
-                    yield html! { (PreEscaped("</ol>")) };
                 },
                 Ok(Err(err)) => {
                     yield html! { span { "Could not parse feed: " (err) } };

@@ -10,6 +10,10 @@ mod pages;
 async fn rocket() -> _ {
     rocket::build().mount(
         "/",
-        routes![pages::feed::view::render, pages::healthcheck::render],
+        routes![
+            pages::feed::view::render,
+            pages::feed::view_item::render,
+            pages::healthcheck::render
+        ],
     )
 }
