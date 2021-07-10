@@ -22,6 +22,7 @@ RUN cargo install cargo-watch --version 7.8.0
 RUN mkdir /usr/local/cargo/git && mkdir /app/target
 
 ENV ROCKET_ADDRESS=0.0.0.0
+ENV ROCKET_IDENT=false
 ENV ROCKET_SHUTDOWN={grace=0,mercy=0}
 
 CMD [ "cargo", "watch", "--exec", "run $CARGO_ARGS" ]
