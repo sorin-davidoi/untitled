@@ -1,7 +1,6 @@
 //! Route for viewing feed information.
 
 use maud::{html, Markup, PreEscaped};
-use reqwest::get;
 use rocket::async_stream::stream;
 use rocket::futures::Stream;
 use rocket::tokio::task::spawn_blocking;
@@ -10,6 +9,7 @@ use rss::Channel;
 use std::io::Cursor;
 
 use crate::pages::Page;
+use crate::REQWEST_CLIENT;
 
 /// Render the feed at the given URI.
 #[get("/feeds/<uri>", format = "text/html")]
@@ -27,7 +27,18 @@ pub async fn render<'r>(uri: String) -> Page<impl Stream<Item = Markup>> {
             yield html! { div role="progressbar" aria-label=(&uri); };
             yield html! { span { "Establishing connection..." } };
 
-            let response = match get(&uri).await {
+            let client = REQWEST_CLIENT.clone();
+
+            let request = match client.get(&uri).build() {
+                Ok(request) => request,
+                Err(err) => {
+                    yield html! { span { "Could not initiate connection: " (err) } };
+                    yield html! { (PreEscaped("</div></main>")) };
+                    return;
+                },
+            };
+
+            let response = match client.execute(request).await {
                 Ok(response) => response,
                 Err(err) => {
                     yield html! { span { "Could not establish connection: " (err) } };

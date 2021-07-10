@@ -1812,6 +1812,7 @@ version = "0.1.0"
 dependencies = [
  "maud",
  "mockito",
+ "once_cell",
  "reqwest",
  "rocket",
  "rss",
