@@ -32,6 +32,7 @@ services:
     tty: true
 
   commitlint:
+    profiles: [tools]
     build:
       context: tools/commitlint
     volumes:
@@ -39,6 +40,7 @@ services:
     tty: true
 
   editorconfig-checker:
+    profiles: [tools]
     build:
       context: tools/editorconfig-checker
     volumes:
