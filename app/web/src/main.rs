@@ -8,5 +8,8 @@ mod pages;
 /// Initializes the async runtime and launches the web server.
 #[launch]
 async fn rocket() -> _ {
-    rocket::build().mount("/", routes![pages::healthcheck::render])
+    rocket::build().mount(
+        "/",
+        routes![pages::feed::view::render, pages::healthcheck::render],
+    )
 }
