@@ -1,6 +1,24 @@
 version: "3.9"
 
 services:
+  web:
+    build:
+      target: development
+      context: app
+    environment:
+      CARGO_ARGS: --bin web
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail-with-body http://$$ROCKET_ADDRESS:8000/healthcheck || exit 1"]
+    ports:
+      - target: 8000
+        published: 8000
+    volumes:
+      - ./app:/app:ro,z
+      - app-cargo-registry:/usr/local/cargo/registry:z
+      - app-cargo-git:/usr/local/cargo/git:z
+      - app-target:/app/target:z
+    tty: true
+
   app:
     profiles: []
     build:
