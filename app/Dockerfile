@@ -12,6 +12,12 @@ USER rust:rust
 
 FROM base as development
 
+USER root:root
+
+RUN apt-get update && apt-get --no-install-recommends --assume-yes install lld && apt-get clean
+
+USER rust:rust
+
 RUN rustup component add rustfmt
 RUN rustup component add clippy
 RUN cargo install cargo-watch --version 7.8.0
@@ -20,6 +26,8 @@ RUN cargo install cargo-watch --version 7.8.0
 # (otherwise they will be owned by the host user if created
 # automatically by Docker when the volumes are mounted)
 RUN mkdir /usr/local/cargo/git && mkdir /app/target
+
+ENV CARGO_BUILD_RUSTFLAGS="-C link-arg=-fuse-ld=lld"
 
 ENV ROCKET_ADDRESS=0.0.0.0
 ENV ROCKET_IDENT=false
