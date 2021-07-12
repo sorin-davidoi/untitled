@@ -18,6 +18,11 @@ async fn rocket() -> _ {
     rocket::build().mount(
         "/",
         routes![
+            pages::self_service::register::render,
+            pages::self_service::register::create,
+            pages::self_service::login::render,
+            pages::self_service::login::validate,
+            pages::self_service::logout::render,
             pages::feed::view::render,
             pages::feed::view_item::render,
             pages::healthcheck::render

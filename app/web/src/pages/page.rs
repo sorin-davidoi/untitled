@@ -96,6 +96,14 @@ where
                     title { "Untitled" }
                 }
                 body;
+                    nav {
+                        a href=(uri!(super::self_service::register::render)) { "Create account"}
+                        a href=(uri!(super::self_service::login::render)) { "Log in" }
+                        form action=(uri!(super::self_service::logout::render)) method="post" {
+                            button { "Logout" }
+                        }
+                    }
+
         }
     }
 

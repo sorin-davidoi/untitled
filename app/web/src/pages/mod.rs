@@ -2,6 +2,7 @@
 
 pub mod feed;
 pub mod healthcheck;
+pub mod self_service;
 
 mod page;
 
