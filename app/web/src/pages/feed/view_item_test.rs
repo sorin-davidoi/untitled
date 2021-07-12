@@ -1,10 +1,16 @@
 use super::view_item::*;
+use crate::content_security_policy::ContentSecurityPolicy;
 use mockito::{mock, server_url};
 use rocket::{build, http::Status, local::blocking::Client, uri};
 
 #[test]
 fn shows_error_message_for_malformed_uri() {
-    let client = Client::untracked(build().mount("/", routes![render])).unwrap();
+    let client = Client::untracked(
+        build()
+            .attach(ContentSecurityPolicy::default())
+            .mount("/", routes![render]),
+    )
+    .unwrap();
     let response = client
         .get(uri!(render(uri = "test", guid = "test")))
         .dispatch();
@@ -15,7 +21,12 @@ fn shows_error_message_for_malformed_uri() {
 
 #[test]
 fn shows_error_message_for_request_error() {
-    let client = Client::untracked(build().mount("/", routes![render])).unwrap();
+    let client = Client::untracked(
+        build()
+            .attach(ContentSecurityPolicy::default())
+            .mount("/", routes![render]),
+    )
+    .unwrap();
     let mock = mock("GET", "/")
         .expect(10)
         .with_status(Status::TemporaryRedirect.code.into())
@@ -32,7 +43,12 @@ fn shows_error_message_for_request_error() {
 
 #[test]
 fn shows_error_message_for_malformed_feed() {
-    let client = Client::untracked(build().mount("/", routes![render])).unwrap();
+    let client = Client::untracked(
+        build()
+            .attach(ContentSecurityPolicy::default())
+            .mount("/", routes![render]),
+    )
+    .unwrap();
     let mock = mock("GET", "/").expect(1).create();
     let response = client
         .get(uri!(render(uri = server_url(), guid = "test")))
@@ -45,7 +61,12 @@ fn shows_error_message_for_malformed_feed() {
 
 #[test]
 fn shows_feed_item() {
-    let client = Client::untracked(build().mount("/", routes![render])).unwrap();
+    let client = Client::untracked(
+        build()
+            .attach(ContentSecurityPolicy::default())
+            .mount("/", routes![render]),
+    )
+    .unwrap();
     let mock = mock("GET", "/")
         .with_body(
             r#"

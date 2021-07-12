@@ -7,21 +7,26 @@ use rocket::tokio::task::spawn_blocking;
 use rss::Channel;
 use std::io::Cursor;
 
+use crate::context::Context;
 use crate::pages::Page;
 use crate::REQWEST_CLIENT;
 
 /// Render the feed at the given URI.
 #[get("/feeds/<uri>/<guid>", format = "text/html")]
-pub async fn render<'r>(uri: String, guid: String) -> Page<impl Stream<Item = Markup>> {
+pub async fn render<'r>(
+    uri: String,
+    guid: String,
+    context: Context,
+) -> Page<impl Stream<Item = Markup>> {
     Page::builder()
         .content(stream! {
+            yield html! { style nonce=(context.nonce); };
             yield html! { (PreEscaped("
-                <style>
-                    main > [role='progressbar'] { display: inline-flex; justify-content: center; }
-                    main > [role='progressbar']:not(:last-child),
-                    main > [role='progressbar'] > span:not(:last-child) { display: none; }
-                </style>
+                main > [role='progressbar'] { display: inline-flex; justify-content: center; }
+                main > [role='progressbar']:not(:last-child),
+                main > [role='progressbar'] > span:not(:last-child) { display: none; }
             ")) };
+            yield html! { (PreEscaped("</style>")) };
             yield html! { main; };
             yield html! { div role="progressbar" aria-label=(uri); };
             yield html! { span { "Establishing connection..." } };
