@@ -1,5 +1,6 @@
 //! Registration-related routes.
 
+use crate::context::Context;
 use crate::pages::Page;
 use maud::{html, Markup};
 use rocket::async_stream::stream;
@@ -18,8 +19,8 @@ pub struct CreateAccountCredentials<'r> {
 
 /// Report the health of the application.
 #[get("/self-service/create-account", format = "text/html")]
-pub async fn render() -> Page<impl Stream<Item = Markup>> {
-    Page::builder()
+pub async fn render(context: Context) -> Page<impl Stream<Item = Markup>> {
+    Page::builder(&context)
         .content(stream! {
             yield html! {
                 main {
@@ -49,8 +50,9 @@ pub async fn render() -> Page<impl Stream<Item = Markup>> {
 )]
 pub async fn create(
     credentials: Form<CreateAccountCredentials<'_>>,
+    context: Context,
 ) -> Page<impl Stream<Item = Markup> + '_> {
-    Page::builder()
+    Page::builder(&context)
         .content(stream! {
             yield html! {
                 main {

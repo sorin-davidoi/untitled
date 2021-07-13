@@ -18,7 +18,7 @@ pub async fn render<'r>(
     guid: String,
     context: Context,
 ) -> Page<impl Stream<Item = Markup>> {
-    Page::builder()
+    Page::builder(&context)
         .content(stream! {
             yield html! { style nonce=(context.nonce); };
             yield html! { (PreEscaped("

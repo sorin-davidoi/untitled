@@ -9,6 +9,8 @@ use rocket::response::stream::ReaderStream;
 use rocket::response::Responder;
 use rocket::{Request, Response};
 
+use crate::context::Context;
+
 /// Main unit of rendering HTML. Usually constructed with [`Self::builder()`].
 pub struct Page<S> {
     /// The main content of the page.
@@ -17,8 +19,8 @@ pub struct Page<S> {
 
 impl<'r, S: Stream<Item = Markup> + Send> Page<S> {
     /// Constructs a new builder instance.
-    pub fn builder() -> PageBuilder<S> {
-        PageBuilder::default()
+    pub fn builder(context: &'r Context) -> PageBuilder<S> {
+        PageBuilder::from(context)
     }
 }
 
@@ -48,16 +50,8 @@ where
 {
     /// The main content of the page.
     content: Option<S>,
-}
-
-impl<S: Stream<Item = Markup>> Default for PageBuilder<S>
-where
-    S: Send,
-    S::Item: Send + Unpin,
-{
-    fn default() -> Self {
-        Self { content: None }
-    }
+    /// The request context.
+    context: Context,
 }
 
 impl<'r, S: Stream<Item = Markup>> PageBuilder<S>
@@ -94,6 +88,11 @@ where
                     meta charset="UTF-8";
                     meta name="viewport" content="width=device-width, initial-scale=1.0";
                     title { "Untitled" }
+                    style nonce=(&self.context.nonce);
+                    (PreEscaped("
+                        body > nav { display: flex; justify-content: end; gap: 1rem; }
+                    "));
+                    (PreEscaped("</style>"))
                 }
                 body;
                     nav {
@@ -112,6 +111,19 @@ where
         html! {
                 (PreEscaped("</body>"));
             (PreEscaped("</html>"));
+        }
+    }
+}
+
+impl<'r, S: Stream<Item = Markup>> From<&'r Context> for PageBuilder<S>
+where
+    S: Send + 'r,
+    S::Item: Send + Unpin + 'r,
+{
+    fn from(context: &'r Context) -> Self {
+        Self {
+            content: None,
+            context: context.clone(),
         }
     }
 }

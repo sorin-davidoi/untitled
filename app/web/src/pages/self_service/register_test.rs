@@ -1,9 +1,15 @@
 use super::register::*;
+use crate::content_security_policy::ContentSecurityPolicy;
 use rocket::{build, http::ContentType, local::blocking::Client, uri};
 
 #[test]
 fn shows_form() {
-    let client = Client::untracked(build().mount("/", routes![render])).unwrap();
+    let client = Client::untracked(
+        build()
+            .attach(ContentSecurityPolicy::default())
+            .mount("/", routes![render]),
+    )
+    .unwrap();
     let response = client.get(uri!(render)).dispatch();
     let body = response.into_string().unwrap();
 
@@ -12,7 +18,12 @@ fn shows_form() {
 
 #[test]
 fn shows_unimplemented_message() {
-    let client = Client::untracked(build().mount("/", routes![create])).unwrap();
+    let client = Client::untracked(
+        build()
+            .attach(ContentSecurityPolicy::default())
+            .mount("/", routes![create]),
+    )
+    .unwrap();
     let response = client
         .post(uri!(create))
         .header(ContentType::Form)
